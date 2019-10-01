@@ -41,11 +41,10 @@ public class GameEngine extends SurfaceView implements Runnable {
             Random r = new Random();
             int randomXPOS = r.nextInt(this.screenWidth) + 1;
             int randomYPOS = r.nextInt(this.screenHeight) + 1;
-            Square b = new Square(getContext(), randomXPOS, randomYPOS, SQUARE_WIDTH);
+            //Square b = new Square(getContext(), randomXPOS, randomYPOS, SQUARE_WIDTH);
         }
 
-        this.bullet = new Square(context, 100, this.screenHeight - 400, SQUARE_WIDTH);
-        this.cage = new Square(context, 1400, 50, CAGE_WIDTH);
+        //this.bullet = new Square(context, 100, this.screenHeight - 400, SQUARE_WIDTH);
 
         this.spawnPlayer();
         this.spawnEnemy();
@@ -108,40 +107,40 @@ public class GameEngine extends SurfaceView implements Runnable {
         switch(event.getAction() & MotionEvent.ACTION_MASK){
             case MotionEvent.ACTION_UP:
 
-                for(int i = 0; i < bullets.size(); i++){
-                    Square bul = bullets.get(i);
+                //for(int i = 0; i < bullets.size(); i++){
+                    //Square bul = bullets.get(i);
 
-                    double e = (int) event.getX() - this.bullet.getxPosition();
-                    double f = (int)event.getY() - this.bullet.getyPosition();
+                    //double e = (int) event.getX() - this.bullet.getxPosition();
+                    //double f = (int)event.getY() - this.bullet.getyPosition();
 
                     // d = sqrt(a^2 + b^2)
 
-                    double d1 = Math.sqrt((e * e) + (f * f));
+                    //double d1 = Math.sqrt((e * e) + (f * f));
 
                     // 2. calculate xn and yn constants
                     // (amount of x to move, amount of y to move)
-                    double xn1 = (e / d1);
-                    double yn1 = (f / d1);
+                    //double xn1 = (e / d1);
+                    //double yn1 = (f / d1);
 
                     // 3. calculate new (x,y) coordinates
-                    int newX = this.bullet.getxPosition() + (int) (xn1 * 100);
-                    int newY = this.bullet.getyPosition() + (int) (yn1 * 100);
-                    this.bullet.setxPosition(newX);
-                    this.bullet.setyPosition(newY);
+                    //int newX = this.bullet.getxPosition() + (int) (xn1 * 100);
+                    //int newY = this.bullet.getyPosition() + (int) (yn1 * 100);
+                    //this.bullet.setxPosition(newX);
+                    //this.bullet.setyPosition(newY);
 
                     // 4. update the bullet hitbox position
-                    this.bullet.updateHitbox();
+                    //this.bullet.updateHitbox();
 
 
-                }
+                //}
 
 
 
-                break;
+                //break;
 
-            case MotionEvent.ACTION_DOWN:
+            //case MotionEvent.ACTION_DOWN:
 
-                break;
+               // break;
 
         }
 
