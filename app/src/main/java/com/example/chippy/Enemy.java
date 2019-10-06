@@ -3,34 +3,70 @@ package com.example.chippy;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 
 public class Enemy {
 
-    int xPosition;
-    int yPosition;
+    private Bitmap image;
+    private Rect hitbox;
 
-    Bitmap enemyImage;
+    private int xPosition;
+    private int yPosition;
 
     public Enemy(Context context, int x, int y){
-        this.enemyImage = BitmapFactory.decodeResource(context.getResources(), R.drawable.player64);
         this.xPosition = x;
         this.yPosition = y;
+
+        // 2. Set the default image - all enemies have same image
+        this.image = BitmapFactory.decodeResource(context.getResources(), R.drawable.ufogreen);
+
+        // 3. Set the default hitbox - all enemies have same hitbox
+        this.hitbox = new Rect(
+                this.xPosition,
+                this.yPosition,
+                this.xPosition + this.image.getWidth(),
+                this.yPosition + this.image.getHeight()
+        );
     }
 
-    public void setXPosition(int x) {
-        this.xPosition = x;
-    }
-    public void setYPosition(int y) {
-        this.yPosition = y;
-    }
-    public int getXPosition() {
-        return this.xPosition;
-    }
-    public int getYPosition() {
-        return this.yPosition;
+    public Bitmap getImage() {
+        return image;
     }
 
-    public Bitmap getBitmap() {
-        return this.enemyImage;
+    public void setImage(Bitmap image) {
+        this.image = image;
+    }
+
+
+
+    public Rect getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(Rect hitbox) {
+        this.hitbox = hitbox;
+    }
+
+    public int getxPosition() {
+        return xPosition;
+    }
+
+    public void setxPosition(int xPosition) {
+        this.xPosition = xPosition;
+    }
+
+    public int getyPosition() {
+        return yPosition;
+    }
+
+    public void setyPosition(int yPosition) {
+        this.yPosition = yPosition;
+    }
+
+    public void updateHitbox() {
+        this.hitbox.left = this.xPosition;
+        this.hitbox.top = this.yPosition;
+        this.hitbox.right = this.xPosition + this.image.getWidth();
+        this.hitbox.bottom = this.yPosition + this.image.getHeight();
     }
 }
