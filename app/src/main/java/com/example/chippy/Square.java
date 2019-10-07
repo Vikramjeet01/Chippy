@@ -64,5 +64,3 @@ public class Square {
         this.width = width;
     }
 }
-
-

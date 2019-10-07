@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 
+import java.util.ArrayList;
+
 public class Player {
 
     private Bitmap image;
@@ -12,6 +14,9 @@ public class Player {
 
     private int xPosition;
     private int yPosition;
+
+    private ArrayList<Rect> bullets = new ArrayList<Rect>();
+    private final int BULLET_WIDTH = 20;
 
     public Player(Context context, int x, int y) {
         // 1. set up the initial position of the Enemy
@@ -63,10 +68,34 @@ public class Player {
         this.yPosition = yPosition;
     }
 
+    public ArrayList<Rect> getBullets() {
+        return bullets;
+    }
+
+    public void setBullets(ArrayList<Rect> bullets) {
+        this.bullets = bullets;
+    }
+
+
+    public int getBulletWidth() {
+        return BULLET_WIDTH;
+    }
+
     public void updateHitbox() {
         this.hitbox.left = this.xPosition;
         this.hitbox.top = this.yPosition;
         this.hitbox.right = this.xPosition + this.image.getWidth();
         this.hitbox.bottom = this.yPosition + this.image.getHeight();
     }
+
+    public void spawnBullet() {
+        // make bullet come out of middle of enemty
+        Rect bullet = new Rect(this.xPosition,
+                this.yPosition + this.image.getHeight() / 2,
+                this.xPosition + BULLET_WIDTH,
+                this.yPosition + this.image.getHeight() / 2 + BULLET_WIDTH
+        );
+        this.bullets.add(bullet);
+    }
+
 }

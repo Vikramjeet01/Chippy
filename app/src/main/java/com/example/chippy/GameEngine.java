@@ -4,14 +4,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public class GameEngine extends SurfaceView implements Runnable {
 
@@ -46,12 +43,6 @@ public class GameEngine extends SurfaceView implements Runnable {
     Player player;
     Enemy enemy;
 
-    Square bullet;
-    int b_WIDTH = 25;
-
-    List<Square> bullets = new ArrayList<Square>();
-
-
     public GameEngine(Context context, int w, int h) {
         super(context);
 
@@ -68,18 +59,9 @@ public class GameEngine extends SurfaceView implements Runnable {
 
         // @TODO: Add your sprites
 
-        for(int i =0; i < 15; i++){
-            Random r = new Random();
-            int randomXPOS = r.nextInt(this.screenWidth) + 1;
-            int randomYPOS = r.nextInt(this.screenHeight) + 1;
-            Square b = new Square(getContext(), randomXPOS, randomYPOS, b_WIDTH );
-        }
-
-        this.bullet = new Square(context, 100, this.screenHeight - 400, b_WIDTH);
-
-        // put initial starting postion of enemy
         this.player = new Player(getContext(), 100, this.screenHeight/2);
         this.enemy = new Enemy(getContext(), this.screenWidth/2, this.screenHeight/2);
+
     }
 
     private void printScreenInfo() {
@@ -87,15 +69,6 @@ public class GameEngine extends SurfaceView implements Runnable {
         Log.d(TAG, "Screen (w, h) = " + this.screenWidth + "," + this.screenHeight);
     }
 
-    private void spawnPlayer() {
-        //@TODO: Start the player at the left side of screen
-    }
-    private void spawnEnemyShips() {
-        Random random = new Random();
-
-        //@TODO: Place the enemies in a random location
-
-    }
 
     @Override
     public void run() {
@@ -122,10 +95,14 @@ public class GameEngine extends SurfaceView implements Runnable {
         gameThread.start();
     }
 
+    int numLoops = 0;
+
     public void updatePositions(){
 
-        this.enemy.setxPosition(this.enemy.getxPosition()+5);
-        this.enemy.setyPosition(this.enemy.getyPosition()+5);
+        numLoops = numLoops + 1;
+
+        this.enemy.setxPosition(this.enemy.getxPosition()+2);
+        this.enemy.setyPosition(this.enemy.getyPosition()+2);
         this.enemy.updateHitbox();
 
         if(this.enemy.getyPosition()+this.enemy.getImage().getHeight()+140 >= this.screenHeight) {
@@ -134,38 +111,42 @@ public class GameEngine extends SurfaceView implements Runnable {
         }
 
         if(this.enemy.getxPosition()+this.enemy.getImage().getWidth() >= this.screenWidth) {
-            this.enemy.setxPosition(0);
+            this.enemy.setxPosition((this.screenWidth / 4));
             this.enemy.updateHitbox();
         }
 
-        //Bullet moving towards enemy
+        if (numLoops % 5  == 0) {
+            this.player.spawnBullet();
+        }
 
 
-            double e = this.enemy.getxPosition() - this.bullet.getxPosition();
-            double f = this.enemy.getyPosition() - this.bullet.getyPosition();
+        int BULLET_SPEED = 20;
+        for (int i = 0; i < this.player.getBullets().size();i++) {
+            Rect bullet = this.player.getBullets().get(i);
+            bullet.left = bullet.left + BULLET_SPEED;
+            bullet.right = bullet.right + BULLET_SPEED;
+        }
 
-            // d = sqrt(a^2 + b^2)
+        for (int i = 0; i < this.player.getBullets().size();i++) {
+            Rect bullet = this.player.getBullets().get(i);
 
-            double d1 = Math.sqrt((e * e) + (f * f));
+            // For each bullet, check if teh bullet touched the wall
+            if (bullet.right >= this.screenWidth) {
+                this.player.getBullets().remove(bullet);
+            }
+        }
 
-            // 2. calculate xn and yn constants
-            // (amount of x to move, amount of y to move)
-            double xn1 = (e / d1);
-            double yn1 = (f / d1);
+        for (int i = 0; i < this.player.getBullets().size();i++) {
+            Rect bullet = this.player.getBullets().get(i);
 
-            // 3. calculate new (x,y) coordinates
-            int newX = this.bullet.getxPosition() + (int) (xn1 * 10);
-            int newY = this.bullet.getyPosition() + (int) (yn1 * 10);
-            this.bullet.setxPosition(newX);
-            this.bullet.setyPosition(newY);
+            if (this.enemy.getHitbox().intersect(bullet)) {
+                this.enemy.setxPosition(this.screenWidth / 2);
+                this.enemy.setyPosition(this.screenHeight / 2);
+                this.enemy.updateHitbox();
+                //lives = lives - 1;
+            }
 
-            // 4. update the bullet hitbox position
-            this.bullet.updateHitbox();
-
-
-
-
-
+        }
 
     }
 
@@ -202,21 +183,9 @@ public class GameEngine extends SurfaceView implements Runnable {
 
             paintbrush.setColor(Color.BLACK);
             paintbrush.setStyle(Paint.Style.FILL);
-            canvas.drawRect(
-                    this.bullet.getxPosition(),
-                    this.bullet.getyPosition(),
-                    this.bullet.getxPosition() + this.bullet.getWidth(),
-                    this.bullet.getyPosition() + this.bullet.getWidth(),
-                    paintbrush
-            );
-            canvas.drawRect(
-                    this.bullet.getHitbox(),
-                    paintbrush
-            );
-
-            for (int i = 0; i < bullets.size(); i++){
-                Square b = bullets.get(i);
-                canvas.drawRect(b.getxPosition(), b.getyPosition(), b.getxPosition() + b_WIDTH, b.getxPosition() + b_WIDTH, paintbrush);
+            for (int i = 0; i < this.player.getBullets().size(); i++) {
+                Rect bullet = this.player.getBullets().get(i);
+                canvas.drawRect(bullet, paintbrush);
             }
 
             //----------------
@@ -227,7 +196,7 @@ public class GameEngine extends SurfaceView implements Runnable {
 
     public void setFPS() {
         try {
-            gameThread.sleep(50);
+            gameThread.sleep(100);
         }
         catch (Exception e) {
 
