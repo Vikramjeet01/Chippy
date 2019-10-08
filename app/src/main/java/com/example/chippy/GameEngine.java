@@ -43,6 +43,8 @@ public class GameEngine extends SurfaceView implements Runnable {
     Player player;
     Enemy enemy;
 
+    int lives = 5;
+
     public GameEngine(Context context, int w, int h) {
         super(context);
 
@@ -168,10 +170,14 @@ public class GameEngine extends SurfaceView implements Runnable {
             Rect bullet = this.enemy.getBullets().get(i);
 
             if (this.player.getHitbox().intersect(bullet)) {
-                this.player.setxPosition(this.screenWidth / 2);
+                this.player.setxPosition(100);
                 this.player.setyPosition(this.screenHeight / 2);
                 this.player.updateHitbox();
-                //lives = lives - 1;
+                lives = lives - 1;
+
+                if(lives == 0){
+                    this.pauseGame();
+                }
             }
 
         }
@@ -223,6 +229,13 @@ public class GameEngine extends SurfaceView implements Runnable {
                 canvas.drawRect(bullet, paintbrush);
             }
 
+            paintbrush.setColor(Color.BLUE);
+            paintbrush.setTextSize(60);
+            canvas.drawText("Lives remaining: " + lives,
+                    500,
+                    100,
+                    paintbrush
+            );
             //----------------
             this.holder.unlockCanvasAndPost(canvas);
         }
