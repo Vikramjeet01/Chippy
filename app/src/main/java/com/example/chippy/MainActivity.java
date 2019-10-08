@@ -28,7 +28,9 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
 
         //Pause the game
+
         chippy.pauseGame();
+
     }
 
     @Override
@@ -38,4 +40,5 @@ public class MainActivity extends AppCompatActivity {
 
         chippy.startGame();
     }
+
 }

@@ -1,6 +1,9 @@
 package com.example.chippy;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -43,6 +46,8 @@ public class GameEngine extends SurfaceView implements Runnable {
     Player player;
     Enemy enemy;
 
+    Bitmap background;
+
     int lives = 5;
 
     public GameEngine(Context context, int w, int h) {
@@ -63,6 +68,15 @@ public class GameEngine extends SurfaceView implements Runnable {
 
         this.player = new Player(getContext(), 100, this.screenHeight/2);
         this.enemy = new Enemy(getContext(), this.screenWidth/2, this.screenHeight/2);
+
+        this.background = BitmapFactory.decodeResource(context.getResources(), R.drawable.b1);
+        // dynamically resize the background to fit the device
+        this.background = Bitmap.createScaledBitmap(
+                this.background,
+                this.screenWidth,
+                this.screenHeight,
+                false
+        );
 
     }
 
@@ -96,6 +110,7 @@ public class GameEngine extends SurfaceView implements Runnable {
         gameThread = new Thread(this);
         gameThread.start();
     }
+
 
     int numLoops = 0;
 
@@ -175,7 +190,7 @@ public class GameEngine extends SurfaceView implements Runnable {
                 this.player.updateHitbox();
                 lives = lives - 1;
 
-                if(lives == 0){
+                if(lives < 0){
                     this.pauseGame();
                 }
             }
@@ -203,6 +218,11 @@ public class GameEngine extends SurfaceView implements Runnable {
             paintbrush.setStyle(Paint.Style.STROKE);
             paintbrush.setStrokeWidth(5);
 
+            canvas.drawBitmap(this.background,
+                    0,
+                    0,
+                    paintbrush);
+
 
             // draw player graphic on screen
 
@@ -229,7 +249,7 @@ public class GameEngine extends SurfaceView implements Runnable {
                 canvas.drawRect(bullet, paintbrush);
             }
 
-            paintbrush.setColor(Color.BLUE);
+            paintbrush.setColor(Color.WHITE);
             paintbrush.setTextSize(60);
             canvas.drawText("Lives remaining: " + lives,
                     500,
