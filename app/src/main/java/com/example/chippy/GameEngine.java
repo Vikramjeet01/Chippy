@@ -117,6 +117,7 @@ public class GameEngine extends SurfaceView implements Runnable {
 
         if (numLoops % 5  == 0) {
             this.player.spawnBullet();
+            this.enemy.spawnBullet();
         }
 
 
@@ -136,6 +137,21 @@ public class GameEngine extends SurfaceView implements Runnable {
             }
         }
 
+        for (int i = 0; i < this.enemy.getBullets().size();i++) {
+            Rect bullet = this.enemy.getBullets().get(i);
+            bullet.left = bullet.left - BULLET_SPEED;
+            bullet.right = bullet.right - BULLET_SPEED;
+        }
+
+        for (int i = 0; i < this.enemy.getBullets().size();i++) {
+            Rect bullet = this.enemy.getBullets().get(i);
+
+            // For each bullet, check if teh bullet touched the wall
+            if (bullet.left < 0) {
+                this.enemy.getBullets().remove(bullet);
+            }
+        }
+
         for (int i = 0; i < this.player.getBullets().size();i++) {
             Rect bullet = this.player.getBullets().get(i);
 
@@ -143,6 +159,18 @@ public class GameEngine extends SurfaceView implements Runnable {
                 this.enemy.setxPosition(this.screenWidth / 2);
                 this.enemy.setyPosition(this.screenHeight / 2);
                 this.enemy.updateHitbox();
+                //lives = lives - 1;
+            }
+
+        }
+
+        for (int i = 0; i < this.enemy.getBullets().size();i++) {
+            Rect bullet = this.enemy.getBullets().get(i);
+
+            if (this.player.getHitbox().intersect(bullet)) {
+                this.player.setxPosition(this.screenWidth / 2);
+                this.player.setyPosition(this.screenHeight / 2);
+                this.player.updateHitbox();
                 //lives = lives - 1;
             }
 
@@ -185,6 +213,13 @@ public class GameEngine extends SurfaceView implements Runnable {
             paintbrush.setStyle(Paint.Style.FILL);
             for (int i = 0; i < this.player.getBullets().size(); i++) {
                 Rect bullet = this.player.getBullets().get(i);
+                canvas.drawRect(bullet, paintbrush);
+            }
+
+            paintbrush.setColor(Color.RED);
+            paintbrush.setStyle(Paint.Style.FILL);
+            for (int i = 0; i < this.enemy.getBullets().size(); i++) {
+                Rect bullet = this.enemy.getBullets().get(i);
                 canvas.drawRect(bullet, paintbrush);
             }
 

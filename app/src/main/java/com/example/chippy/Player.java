@@ -89,7 +89,7 @@ public class Player {
     }
 
     public void spawnBullet() {
-        // make bullet come out of middle of enemty
+        // make bullet come out of middle of player
         Rect bullet = new Rect(this.xPosition,
                 this.yPosition + this.image.getHeight() / 2,
                 this.xPosition + BULLET_WIDTH,
