@@ -46,7 +46,13 @@ public class GameEngine extends SurfaceView implements Runnable {
     Player player;
     Enemy enemy;
 
-    Bitmap background;
+    //Bitmap background;
+
+    Square line1;
+    Square line2;
+    Square line3;
+    Square line4;
+    Square line5;
 
     int lives = 5;
 
@@ -69,14 +75,20 @@ public class GameEngine extends SurfaceView implements Runnable {
         this.player = new Player(getContext(), 100, this.screenHeight/2);
         this.enemy = new Enemy(getContext(), this.screenWidth/2, this.screenHeight/2);
 
-        this.background = BitmapFactory.decodeResource(context.getResources(), R.drawable.b1);
+        /*this.background = BitmapFactory.decodeResource(context.getResources(), R.drawable.b1);
         // dynamically resize the background to fit the device
         this.background = Bitmap.createScaledBitmap(
                 this.background,
                 this.screenWidth,
                 this.screenHeight,
                 false
-        );
+        );*/
+
+        this.line1 = new Square(context, 800, 0, 25, 300);
+        this.line2 = new Square(context, 800, 400, 25, 200);
+        this.line3 = new Square(context, 300, 0, 25, 200);
+        this.line4 = new Square(context, 300, 300, 25, 300 );
+        this.line5 = new Square(context, 400, 50, 300, 25);
 
     }
 
@@ -113,11 +125,65 @@ public class GameEngine extends SurfaceView implements Runnable {
 
 
     int numLoops = 0;
+    boolean lineMovingLeft = true;
+    boolean line2MovingRight = true;
+    boolean obstacleMovingDown = true;
 
     public void updatePositions(){
 
         numLoops = numLoops + 1;
 
+        //obstacle 1 moving
+        if (lineMovingLeft == true) {
+            this.line1.setxPosition(this.line1.getxPosition() - 2);
+            this.line2.setxPosition(this.line2.getxPosition() - 2);        }
+        else {
+            this.line1.setxPosition(this.line1.getxPosition() + 2);
+            this.line2.setxPosition(this.line2.getxPosition() + 2);        }
+        this.line1.updateHitbox();
+        this.line2.updateHitbox();
+
+        if(this.line1.getxPosition() < 0){
+            lineMovingLeft = false;
+        }
+
+        if(this.line2.getxPosition() < 0){
+            lineMovingLeft = false;
+        }
+
+        //obstacle 2 moving
+        if(line2MovingRight == true){
+            this.line3.setxPosition((this.line3.getxPosition() + 2));
+            this.line4.setxPosition(this.line4.getxPosition() + 2);
+        }
+        else {
+            this.line3.setxPosition(this.line3.getxPosition() - 2);
+            this.line4.setxPosition(this.line4.getxPosition() - 2);
+        }
+        this.line3.updateHitbox();
+        this.line4.updateHitbox();
+
+        if(this.line3.getxPosition() >= this.screenWidth){
+            line2MovingRight = false;
+        }
+        if(this.line4.getxPosition() >= this.screenWidth){
+            line2MovingRight = false;
+        }
+
+        //obstacle 3 moving
+        if(obstacleMovingDown == true) {
+            this.line5.setyPosition(this.line5.getyPosition() + 2);
+        }
+        else{
+            this.line5.setyPosition(this.line5.getyPosition() - 2);
+        }
+        this.line5.updateHitbox();
+
+        if(this.line5.getyPosition() >= this.screenHeight - 150){
+            obstacleMovingDown = false;
+        }
+
+        //enemy moving
         this.enemy.setxPosition(this.enemy.getxPosition()+2);
         this.enemy.setyPosition(this.enemy.getyPosition()+2);
         this.enemy.updateHitbox();
@@ -132,6 +198,8 @@ public class GameEngine extends SurfaceView implements Runnable {
             this.enemy.updateHitbox();
         }
 
+
+        //bullets added
         if (numLoops % 5  == 0) {
             this.player.spawnBullet();
             this.enemy.spawnBullet();
@@ -197,6 +265,42 @@ public class GameEngine extends SurfaceView implements Runnable {
 
         }
 
+        //player colliding with obstacles
+        if(player.getHitbox().intersect(line1.getHitbox())){
+            lives = lives - 1;
+            if(lives < 0){
+                this.pauseGame();
+            }
+        }
+
+        if(player.getHitbox().intersect(line2.getHitbox())){
+            lives = lives - 1;
+            if(lives < 0){
+                this.pauseGame();
+            }
+        }
+
+        if(player.getHitbox().intersect(line3.getHitbox())){
+            lives = lives - 1;
+            if(lives < 0){
+                this.pauseGame();
+            }
+        }
+
+        if(player.getHitbox().intersect(line4.getHitbox())){
+            lives = lives - 1;
+            if(lives < 0){
+                this.pauseGame();
+            }
+        }
+
+        if(player.getHitbox().intersect(line5.getHitbox())){
+            lives = lives - 1;
+            if(lives < 0){
+                this.pauseGame();
+            }
+        }
+
     }
 
     public void redrawSprites(){
@@ -214,17 +318,81 @@ public class GameEngine extends SurfaceView implements Runnable {
             // DRAW THE PLAYER HITBOX
             // ------------------------
             // 1. change the paintbrush settings so we can see the hitbox
-            paintbrush.setColor(Color.BLUE);
-            paintbrush.setStyle(Paint.Style.STROKE);
-            paintbrush.setStrokeWidth(5);
 
-            canvas.drawBitmap(this.background,
+
+            /*canvas.drawBitmap(this.background,
                     0,
                     0,
-                    paintbrush);
+                    paintbrush);*/
+
+            paintbrush.setColor(Color.BLUE);
+            paintbrush.setStyle(Paint.Style.FILL);
+            paintbrush.setStrokeWidth(5);
+            canvas.drawRect(
+                    this.line1.getxPosition(),
+                    this.line1.getyPosition(),
+                    this.line1.getxPosition() + this.line1.getWidth(),
+                    this.line1.getyPosition() + this.line1.getHeight(),
+                    paintbrush
+            );
+            canvas.drawRect(
+                    this.line1.getHitbox(),
+                    paintbrush
+            );
+
+            canvas.drawRect(
+                    this.line2.getxPosition(),
+                    this.line2.getyPosition(),
+                    this.line2.getxPosition() + this.line2.getWidth(),
+                    this.line2.getyPosition() + this.line2.getHeight(),
+                    paintbrush
+            );
+            canvas.drawRect(
+                    this.line2.getHitbox(),
+                    paintbrush
+            );
+
+            canvas.drawRect(
+                    this.line3.getxPosition(),
+                    this.line3.getyPosition(),
+                    this.line3.getxPosition() + this.line3.getWidth(),
+                    this.line3.getyPosition() + this.line3.getHeight(),
+                    paintbrush
+            );
+            canvas.drawRect(
+                    this.line3.getHitbox(),
+                    paintbrush
+            );
+
+            canvas.drawRect(
+                    this.line4.getxPosition(),
+                    this.line4.getyPosition(),
+                    this.line4.getxPosition() + this.line4.getWidth(),
+                    this.line4.getyPosition() + this.line4.getHeight(),
+                    paintbrush
+            );
+            canvas.drawRect(
+                    this.line4.getHitbox(),
+                    paintbrush
+            );
+
+            canvas.drawRect(
+                    this.line5.getxPosition(),
+                    this.line5.getyPosition(),
+                    this.line5.getxPosition() + this.line5.getWidth(),
+                    this.line5.getyPosition() + this.line5.getHeight(),
+                    paintbrush
+            );
+            canvas.drawRect(
+                    this.line5.getHitbox(),
+                    paintbrush
+            );
 
 
             // draw player graphic on screen
+            paintbrush.setColor(Color.BLUE);
+            paintbrush.setStyle(Paint.Style.STROKE);
+            paintbrush.setStrokeWidth(5);
 
             canvas.drawBitmap(player.getImage(), player.getxPosition(), player.getyPosition(), paintbrush);
             // draw the player's hitbox
@@ -249,11 +417,11 @@ public class GameEngine extends SurfaceView implements Runnable {
                 canvas.drawRect(bullet, paintbrush);
             }
 
-            paintbrush.setColor(Color.WHITE);
-            paintbrush.setTextSize(60);
+            paintbrush.setColor(Color.BLACK);
+            paintbrush.setTextSize(40);
             canvas.drawText("Lives remaining: " + lives,
-                    500,
-                    100,
+                    850,
+                    550,
                     paintbrush
             );
             //----------------
@@ -290,8 +458,8 @@ public class GameEngine extends SurfaceView implements Runnable {
                 double yn1 = (f / d1);
 
                 // 3. calculate new (x,y) coordinates
-                int newX = this.player.getxPosition() + (int) (xn1 * 200);
-                int newY = this.player.getyPosition() + (int) (yn1 * 200);
+                int newX = this.player.getxPosition() + (int) (xn1 * 50);
+                int newY = this.player.getyPosition() + (int) (yn1 * 50);
                 this.player.setxPosition(newX);
                 this.player.setyPosition(newY);
 

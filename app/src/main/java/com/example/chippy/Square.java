@@ -8,21 +8,22 @@ public class Square {
     private int xPosition;
     private int yPosition;
     private int width;
+    private int height;
 
     Rect hitbox;
 
-    public Square(Context context, int x, int y, int width) {
+    public Square(Context context, int x, int y, int width, int height) {
         this.xPosition = x;
         this.yPosition = y;
         this.width = width;
+        this.height = height;
 
         this.hitbox = new Rect(
                 this.xPosition,
                 this.yPosition,
                 this.xPosition + this.width,
-                this.yPosition + this.width
+                this.yPosition + this.height
         );
-
     }
 
     public Rect getHitbox() {
@@ -37,7 +38,7 @@ public class Square {
         this.hitbox.left = this.xPosition;
         this.hitbox.top = this.yPosition;
         this.hitbox.right = this.xPosition + this.width;
-        this.hitbox.bottom = this.yPosition + this.width;
+        this.hitbox.bottom = this.yPosition + this.height;
     }
 
     public int getxPosition() {
@@ -62,5 +63,13 @@ public class Square {
 
     public void setWidth(int width) {
         this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = width;
     }
 }
