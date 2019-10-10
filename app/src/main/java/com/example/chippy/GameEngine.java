@@ -369,6 +369,8 @@ public class GameEngine extends SurfaceView implements Runnable {
                     100,
                     paintbrush
             );
+
+            //canvas.drawText("RESTART GAME", 200, 50, paintbrush);
             //----------------
             this.holder.unlockCanvasAndPost(canvas);
         }
@@ -411,10 +413,6 @@ public class GameEngine extends SurfaceView implements Runnable {
                 // 4. update the bullet hitbox position
                 this.player.updateHitbox();
 
-
-
-
-
                 break;
 
             case MotionEvent.ACTION_DOWN:
@@ -422,6 +420,16 @@ public class GameEngine extends SurfaceView implements Runnable {
                 break;
 
         }
+
+       if(event.getX() > 200 && event.getX() <= 300 ){
+           if(event.getY() > 100 && event.getY() <= 150){
+
+               Log.d(TAG, "Person's pressed: "
+                       + event.getX() + ","
+                       + event.getY());
+               run();
+           }
+       }
 
         return true;
     }
