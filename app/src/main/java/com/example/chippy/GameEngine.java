@@ -1,7 +1,6 @@
 package com.example.chippy;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -47,11 +46,10 @@ public class GameEngine extends SurfaceView implements Runnable {
     Enemy enemy;
 
     //Bitmap background;
+    Bitmap restart;
 
     Square line1;
     Square line2;
-    Square line3;
-    Square line4;
     Square line5;
 
     int lives = 5;
@@ -84,11 +82,11 @@ public class GameEngine extends SurfaceView implements Runnable {
                 false
         );*/
 
-        this.line1 = new Square(context, 800, 0, 25, 300);
-        this.line2 = new Square(context, 800, 400, 25, 200);
-        this.line3 = new Square(context, 300, 0, 25, 200);
-        this.line4 = new Square(context, 300, 300, 25, 300 );
-        this.line5 = new Square(context, 400, 50, 300, 25);
+        this.restart = BitmapFactory.decodeResource(context.getResources(), R.drawable.restart);
+
+        this.line1 = new Square(context, 1500, 0, 40, 500);
+        this.line2 = new Square(context, 1500, 600, 40, 300);
+        this.line5 = new Square(context, 600, 50, 600, 40);
 
     }
 
@@ -126,7 +124,6 @@ public class GameEngine extends SurfaceView implements Runnable {
 
     int numLoops = 0;
     boolean lineMovingLeft = true;
-    boolean line2MovingRight = true;
     boolean obstacleMovingDown = true;
 
     public void updatePositions(){
@@ -151,35 +148,17 @@ public class GameEngine extends SurfaceView implements Runnable {
             lineMovingLeft = false;
         }
 
-        //obstacle 2 moving
-        if(line2MovingRight == true){
-            this.line3.setxPosition((this.line3.getxPosition() + 2));
-            this.line4.setxPosition(this.line4.getxPosition() + 2);
-        }
-        else {
-            this.line3.setxPosition(this.line3.getxPosition() - 2);
-            this.line4.setxPosition(this.line4.getxPosition() - 2);
-        }
-        this.line3.updateHitbox();
-        this.line4.updateHitbox();
-
-        if(this.line3.getxPosition() >= this.screenWidth){
-            line2MovingRight = false;
-        }
-        if(this.line4.getxPosition() >= this.screenWidth){
-            line2MovingRight = false;
-        }
 
         //obstacle 3 moving
         if(obstacleMovingDown == true) {
-            this.line5.setyPosition(this.line5.getyPosition() + 2);
+            this.line5.setyPosition(this.line5.getyPosition() + 10);
         }
         else{
-            this.line5.setyPosition(this.line5.getyPosition() - 2);
+            this.line5.setyPosition(this.line5.getyPosition() - 10);
         }
         this.line5.updateHitbox();
 
-        if(this.line5.getyPosition() >= this.screenHeight - 150){
+        if(this.line5.getyPosition() >= this.screenHeight - 190){
             obstacleMovingDown = false;
         }
 
@@ -188,7 +167,7 @@ public class GameEngine extends SurfaceView implements Runnable {
         this.enemy.setyPosition(this.enemy.getyPosition()+2);
         this.enemy.updateHitbox();
 
-        if(this.enemy.getyPosition()+this.enemy.getImage().getHeight()+140 >= this.screenHeight) {
+        if(this.enemy.getyPosition()+this.enemy.getImage().getHeight() +190 >= this.screenHeight) {
             this.enemy.setyPosition(0);
             this.enemy.updateHitbox();
         }
@@ -267,35 +246,22 @@ public class GameEngine extends SurfaceView implements Runnable {
 
         //player colliding with obstacles
         if(player.getHitbox().intersect(line1.getHitbox())){
-            lives = lives - 1;
+            lives = lives - 5;
             if(lives < 0){
                 this.pauseGame();
             }
         }
 
         if(player.getHitbox().intersect(line2.getHitbox())){
-            lives = lives - 1;
+            lives = lives - 5;
             if(lives < 0){
                 this.pauseGame();
             }
         }
 
-        if(player.getHitbox().intersect(line3.getHitbox())){
-            lives = lives - 1;
-            if(lives < 0){
-                this.pauseGame();
-            }
-        }
-
-        if(player.getHitbox().intersect(line4.getHitbox())){
-            lives = lives - 1;
-            if(lives < 0){
-                this.pauseGame();
-            }
-        }
 
         if(player.getHitbox().intersect(line5.getHitbox())){
-            lives = lives - 1;
+            lives = lives - 5;
             if(lives < 0){
                 this.pauseGame();
             }
@@ -352,29 +318,6 @@ public class GameEngine extends SurfaceView implements Runnable {
                     paintbrush
             );
 
-            canvas.drawRect(
-                    this.line3.getxPosition(),
-                    this.line3.getyPosition(),
-                    this.line3.getxPosition() + this.line3.getWidth(),
-                    this.line3.getyPosition() + this.line3.getHeight(),
-                    paintbrush
-            );
-            canvas.drawRect(
-                    this.line3.getHitbox(),
-                    paintbrush
-            );
-
-            canvas.drawRect(
-                    this.line4.getxPosition(),
-                    this.line4.getyPosition(),
-                    this.line4.getxPosition() + this.line4.getWidth(),
-                    this.line4.getyPosition() + this.line4.getHeight(),
-                    paintbrush
-            );
-            canvas.drawRect(
-                    this.line4.getHitbox(),
-                    paintbrush
-            );
 
             canvas.drawRect(
                     this.line5.getxPosition(),
@@ -417,11 +360,13 @@ public class GameEngine extends SurfaceView implements Runnable {
                 canvas.drawRect(bullet, paintbrush);
             }
 
+            canvas.drawBitmap(this.restart, 200, 50, paintbrush);
+
             paintbrush.setColor(Color.BLACK);
-            paintbrush.setTextSize(40);
+            paintbrush.setTextSize(60);
             canvas.drawText("Lives remaining: " + lives,
-                    850,
-                    550,
+                    900,
+                    100,
                     paintbrush
             );
             //----------------
