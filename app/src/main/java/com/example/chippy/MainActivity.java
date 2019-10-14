@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
         //Pause the game
 
         chippy.pauseGame();
-
     }
 
     @Override

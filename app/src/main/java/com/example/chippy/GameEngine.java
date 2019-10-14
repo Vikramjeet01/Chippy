@@ -16,6 +16,7 @@ public class GameEngine extends SurfaceView implements Runnable {
 
     final static String TAG="CHIPPY";
 
+    Context context;
     int screenHeight;
     int screenWidth;
 
@@ -30,8 +31,6 @@ public class GameEngine extends SurfaceView implements Runnable {
     SurfaceHolder holder;
     Canvas canvas;
     Paint paintbrush;
-
-
 
     // -----------------------------------
     // GAME SPECIFIC VARIABLES
@@ -53,11 +52,16 @@ public class GameEngine extends SurfaceView implements Runnable {
     Square line5;
 
     int lives = 5;
+    int BULLET_SPEED = 20;
+    int numLoops = 0;
+    boolean lineMovingLeft = true;
+    boolean obstacleMovingDown = true;
+
 
     public GameEngine(Context context, int w, int h) {
         super(context);
 
-
+        this.context = context;
         this.holder = this.getHolder();
         this.paintbrush = new Paint();
 
@@ -84,10 +88,9 @@ public class GameEngine extends SurfaceView implements Runnable {
 
         this.restart = BitmapFactory.decodeResource(context.getResources(), R.drawable.restart);
 
-        this.line1 = new Square(context, 1500, 0, 40, 500);
+        this.line1 = new Square(context, 1500, 0, 40, 400);
         this.line2 = new Square(context, 1500, 600, 40, 300);
         this.line5 = new Square(context, 600, 50, 600, 40);
-
     }
 
     private void printScreenInfo() {
@@ -121,10 +124,27 @@ public class GameEngine extends SurfaceView implements Runnable {
         gameThread.start();
     }
 
+    public void restartGame(){
 
-    int numLoops = 0;
-    boolean lineMovingLeft = true;
-    boolean obstacleMovingDown = true;
+
+        // @TODO: Add your sprites
+
+        this.player = new Player(getContext(), 100, this.screenHeight/2);
+        this.enemy = new Enemy(getContext(), this.screenWidth/2, this.screenHeight/2);
+
+        this.restart = BitmapFactory.decodeResource(context.getResources(), R.drawable.restart);
+
+        this.line1 = new Square(context, 1500, 0, 40, 500);
+        this.line2 = new Square(context, 1500, 600, 40, 300);
+        this.line5 = new Square(context, 600, 50, 600, 40);
+
+        lives = 5;
+
+        numLoops = 0;
+        gameIsRunning = false;
+
+        startGame();
+    }
 
     public void updatePositions(){
 
@@ -132,11 +152,11 @@ public class GameEngine extends SurfaceView implements Runnable {
 
         //obstacle 1 moving
         if (lineMovingLeft == true) {
-            this.line1.setxPosition(this.line1.getxPosition() - 2);
-            this.line2.setxPosition(this.line2.getxPosition() - 2);        }
+            this.line1.setxPosition(this.line1.getxPosition() - 5);
+            this.line2.setxPosition(this.line2.getxPosition() - 5);        }
         else {
-            this.line1.setxPosition(this.line1.getxPosition() + 2);
-            this.line2.setxPosition(this.line2.getxPosition() + 2);        }
+            this.line1.setxPosition(this.line1.getxPosition() + 5);
+            this.line2.setxPosition(this.line2.getxPosition() + 5);        }
         this.line1.updateHitbox();
         this.line2.updateHitbox();
 
@@ -151,10 +171,10 @@ public class GameEngine extends SurfaceView implements Runnable {
 
         //obstacle 3 moving
         if(obstacleMovingDown == true) {
-            this.line5.setyPosition(this.line5.getyPosition() + 10);
+            this.line5.setyPosition(this.line5.getyPosition() + 5);
         }
         else{
-            this.line5.setyPosition(this.line5.getyPosition() - 10);
+            this.line5.setyPosition(this.line5.getyPosition() - 5);
         }
         this.line5.updateHitbox();
 
@@ -185,7 +205,7 @@ public class GameEngine extends SurfaceView implements Runnable {
         }
 
 
-        int BULLET_SPEED = 20;
+
         for (int i = 0; i < this.player.getBullets().size();i++) {
             Rect bullet = this.player.getBullets().get(i);
             bullet.left = bullet.left + BULLET_SPEED;
@@ -246,14 +266,14 @@ public class GameEngine extends SurfaceView implements Runnable {
 
         //player colliding with obstacles
         if(player.getHitbox().intersect(line1.getHitbox())){
-            lives = lives - 5;
+            lives = lives - 1;
             if(lives < 0){
                 this.pauseGame();
             }
         }
 
         if(player.getHitbox().intersect(line2.getHitbox())){
-            lives = lives - 5;
+            lives = lives - 1;
             if(lives < 0){
                 this.pauseGame();
             }
@@ -261,7 +281,7 @@ public class GameEngine extends SurfaceView implements Runnable {
 
 
         if(player.getHitbox().intersect(line5.getHitbox())){
-            lives = lives - 5;
+            lives = lives - 1;
             if(lives < 0){
                 this.pauseGame();
             }
@@ -274,8 +294,6 @@ public class GameEngine extends SurfaceView implements Runnable {
         if (this.holder.getSurface().isValid()) {
             this.canvas = this.holder.lockCanvas();
 
-            //----------------
-
             // configure the drawing tools
             this.canvas.drawColor(Color.argb(255,255,255,255));
             paintbrush.setColor(Color.WHITE);
@@ -284,12 +302,6 @@ public class GameEngine extends SurfaceView implements Runnable {
             // DRAW THE PLAYER HITBOX
             // ------------------------
             // 1. change the paintbrush settings so we can see the hitbox
-
-
-            /*canvas.drawBitmap(this.background,
-                    0,
-                    0,
-                    paintbrush);*/
 
             paintbrush.setColor(Color.BLUE);
             paintbrush.setStyle(Paint.Style.FILL);
@@ -360,7 +372,9 @@ public class GameEngine extends SurfaceView implements Runnable {
                 canvas.drawRect(bullet, paintbrush);
             }
 
-            canvas.drawBitmap(this.restart, 200, 50, paintbrush);
+            if(lives < 1) {
+                canvas.drawBitmap(this.restart, 200, 50, paintbrush);
+            }
 
             paintbrush.setColor(Color.BLACK);
             paintbrush.setTextSize(60);
@@ -396,7 +410,6 @@ public class GameEngine extends SurfaceView implements Runnable {
                 double f = (int)event.getY() - this.player.getyPosition();
 
                 // d = sqrt(a^2 + b^2)
-
                 double d1 = Math.sqrt((e * e) + (f * f));
 
                 // 2. calculate xn and yn constants
@@ -412,11 +425,9 @@ public class GameEngine extends SurfaceView implements Runnable {
 
                 // 4. update the bullet hitbox position
                 this.player.updateHitbox();
-
                 break;
 
             case MotionEvent.ACTION_DOWN:
-
                 break;
 
         }
@@ -427,11 +438,11 @@ public class GameEngine extends SurfaceView implements Runnable {
                Log.d(TAG, "Person's pressed: "
                        + event.getX() + ","
                        + event.getY());
-               run();
+
+               restartGame();
            }
        }
-
-        return true;
+       return true;
     }
 
 
