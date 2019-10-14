@@ -1,5 +1,5 @@
 # Chippy
 
-Name - Vikramjeet Singh(C0719847)
+Vikramjeet Singh(C0719847)
 
-Name - Aryesh Arya()
+Aryesh Arya()
