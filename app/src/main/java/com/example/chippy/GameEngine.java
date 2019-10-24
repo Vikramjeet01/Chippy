@@ -52,7 +52,7 @@ public class GameEngine extends SurfaceView implements Runnable {
     Square line5;
 
     int lives = 5;
-    int eHealth = 5000;
+    int eHealth = 50;
     int BULLET_SPEED = 20;
     int numLoops = 0;
     boolean lineMovingLeft = true;
@@ -89,9 +89,9 @@ public class GameEngine extends SurfaceView implements Runnable {
 
         this.restart = BitmapFactory.decodeResource(context.getResources(), R.drawable.restart);
 
-        this.line1 = new Square(context, 1500, 0, 40, 400);
-        this.line2 = new Square(context, 1500, 600, 40, 300);
-        this.line5 = new Square(context, 600, 50, 600, 40);
+        this.line1 = new Square(context, 1500, 0, 60, 400);
+        this.line2 = new Square(context, 1500, 600, 60, 300);
+        this.line5 = new Square(context, 600, 50, 600, 60);
     }
 
     private void printScreenInfo() {
@@ -241,9 +241,9 @@ public class GameEngine extends SurfaceView implements Runnable {
             Rect bullet = this.player.getBullets().get(i);
 
             if (this.enemy.getHitbox().intersect(bullet)) {
-                this.enemy.setxPosition(this.enemy.getxPosition()+2);
+                /*this.enemy.setxPosition(this.enemy.getxPosition()+2);
                 this.enemy.setyPosition(this.enemy.getyPosition()+2);
-                this.enemy.updateHitbox();
+                this.enemy.updateHitbox();*/
                 eHealth = eHealth - 1;
 
                 if(eHealth < 0){
@@ -405,6 +405,8 @@ public class GameEngine extends SurfaceView implements Runnable {
 
             paintbrush.setTextSize(100);
             if(eHealth < 1) {
+                canvas.drawBitmap(this.restart, 200, 50, paintbrush);
+
                 canvas.drawText("YOU WON ",
                         this.screenWidth / 2,
                         this.screenHeight / 2,
