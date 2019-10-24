@@ -52,7 +52,7 @@ public class GameEngine extends SurfaceView implements Runnable {
     Square line5;
 
     int lives = 5;
-    int eHealth = 5000;
+    int eHealth = 50;
     int BULLET_SPEED = 20;
     int numLoops = 0;
     boolean lineMovingLeft = true;
@@ -385,8 +385,14 @@ public class GameEngine extends SurfaceView implements Runnable {
             }
 
             //restart button
+            paintbrush.setTextSize(100);
             if(lives < 1) {
                 canvas.drawBitmap(this.restart, 200, 50, paintbrush);
+                canvas.drawText("YOU LOST ",
+                        this.screenWidth / 2,
+                        this.screenHeight / 2,
+                        paintbrush
+                );
             }
 
             paintbrush.setColor(Color.WHITE);
@@ -397,11 +403,14 @@ public class GameEngine extends SurfaceView implements Runnable {
                     paintbrush
             );
 
-            /*canvas.drawText("health remaining: " + eHealth,
-                    100,
-                    100,
-                    paintbrush
-            );*/
+            paintbrush.setTextSize(100);
+            if(eHealth < 1) {
+                canvas.drawText("YOU WON ",
+                        this.screenWidth / 2,
+                        this.screenHeight / 2,
+                        paintbrush
+                );
+            }
 
             //canvas.drawText("RESTART GAME", 200, 50, paintbrush);
             //----------------
