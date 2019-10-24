@@ -44,7 +44,7 @@ public class GameEngine extends SurfaceView implements Runnable {
     Player player;
     Enemy enemy;
 
-    //Bitmap background;
+    Bitmap background;
     Bitmap restart;
 
     Square line1;
@@ -77,14 +77,14 @@ public class GameEngine extends SurfaceView implements Runnable {
         this.player = new Player(getContext(), 100, this.screenHeight/2);
         this.enemy = new Enemy(getContext(), this.screenWidth/2, this.screenHeight/2);
 
-        /*this.background = BitmapFactory.decodeResource(context.getResources(), R.drawable.b1);
+        this.background = BitmapFactory.decodeResource(context.getResources(), R.drawable.b1);
         // dynamically resize the background to fit the device
         this.background = Bitmap.createScaledBitmap(
                 this.background,
                 this.screenWidth,
                 this.screenHeight,
                 false
-        );*/
+        );
 
         this.restart = BitmapFactory.decodeResource(context.getResources(), R.drawable.restart);
 
