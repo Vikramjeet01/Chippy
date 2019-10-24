@@ -52,7 +52,7 @@ public class GameEngine extends SurfaceView implements Runnable {
     Square line5;
 
     int lives = 5;
-    int eHealth = 50;
+    int eHealth = 5000;
     int BULLET_SPEED = 20;
     int numLoops = 0;
     boolean lineMovingLeft = true;
