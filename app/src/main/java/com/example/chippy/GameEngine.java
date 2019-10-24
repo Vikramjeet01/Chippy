@@ -52,6 +52,7 @@ public class GameEngine extends SurfaceView implements Runnable {
     Square line5;
 
     int lives = 5;
+    int eHealth = 5000;
     int BULLET_SPEED = 20;
     int numLoops = 0;
     boolean lineMovingLeft = true;
@@ -240,10 +241,14 @@ public class GameEngine extends SurfaceView implements Runnable {
             Rect bullet = this.player.getBullets().get(i);
 
             if (this.enemy.getHitbox().intersect(bullet)) {
-                this.enemy.setxPosition(this.screenWidth / 2);
-                this.enemy.setyPosition(this.screenHeight / 2);
+                this.enemy.setxPosition(this.enemy.getxPosition()+2);
+                this.enemy.setyPosition(this.enemy.getyPosition()+2);
                 this.enemy.updateHitbox();
-                //lives = lives - 1;
+                eHealth = eHealth - 1;
+
+                if(eHealth < 0){
+                    this.pauseGame();
+                }
             }
 
         }
@@ -297,6 +302,13 @@ public class GameEngine extends SurfaceView implements Runnable {
             // configure the drawing tools
             this.canvas.drawColor(Color.argb(255,255,255,255));
             paintbrush.setColor(Color.WHITE);
+
+            // DRAW THE BACKGROUND
+                      // -----------------------------
+                               canvas.drawBitmap(this.background,
+                                              0,
+                                              0,
+                                            paintbrush);
 
 
             // DRAW THE PLAYER HITBOX
@@ -372,17 +384,24 @@ public class GameEngine extends SurfaceView implements Runnable {
                 canvas.drawRect(bullet, paintbrush);
             }
 
+            //restart button
             if(lives < 1) {
                 canvas.drawBitmap(this.restart, 200, 50, paintbrush);
             }
 
-            paintbrush.setColor(Color.BLACK);
+            paintbrush.setColor(Color.WHITE);
             paintbrush.setTextSize(60);
             canvas.drawText("Lives remaining: " + lives,
                     900,
                     100,
                     paintbrush
             );
+
+            /*canvas.drawText("health remaining: " + eHealth,
+                    100,
+                    100,
+                    paintbrush
+            );*/
 
             //canvas.drawText("RESTART GAME", 200, 50, paintbrush);
             //----------------
@@ -431,6 +450,8 @@ public class GameEngine extends SurfaceView implements Runnable {
                 break;
 
         }
+
+        //restart pixels
 
        if(event.getX() > 200 && event.getX() <= 300 ){
            if(event.getY() > 100 && event.getY() <= 150){
